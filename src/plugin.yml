@@ -1,0 +1,7 @@
+name: ThrowingStones
+description: Throw items like cobble and bricks to cause damage and effects
+version: 0.0.1
+author: Ben Sergent V
+
+main: com.sergenttech.plugins.throwingstones.ThrowingStones
+database: false

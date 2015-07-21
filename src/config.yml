@@ -1,0 +1,12 @@
+cobble_enabled: true
+cobble_damage: 1
+cobble_effects:
+brick_enable: true
+brick_damage: 2
+brick_effects:
+    - blindness
+slime_enable: true
+slime_damage: 0
+slime_effects:
+    - slowness
+verbose_errors: false

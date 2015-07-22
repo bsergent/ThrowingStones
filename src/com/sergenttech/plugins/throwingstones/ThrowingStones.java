@@ -5,9 +5,10 @@
 package com.sergenttech.plugins.throwingstones;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.logging.Level;
+import org.bukkit.Sound;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 /**
  * 
  *
@@ -15,7 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class ThrowingStones extends JavaPlugin {
     
-    private final String version = "0.0.2";
+    private final String version = "0.0.3";
     
     @Override
     public void onEnable() {
@@ -46,7 +47,11 @@ public class ThrowingStones extends JavaPlugin {
                 for (ThrowableEnum thr : ThrowableEnum.values()) {
                     if (e.getItemDrop().getItemStack().getType().name().equalsIgnoreCase(thr.name())) {
                         ThrowableEnum throwable = ThrowableEnum.valueOf(e.getItemDrop().getItemStack().getType().name());
-                        e.getItemDrop().setVelocity(e.getItemDrop().getVelocity().multiply(throwable.speedMultiplier));
+                        Vector vel = e.getPlayer().getLocation().getDirection();
+                        vel = vel.multiply(throwable.speedMultiplier);
+                        vel = vel.add(Vector.getRandom().multiply(0.2f));
+                        e.getItemDrop().setVelocity(vel);
+                        //e.getItemDrop().setVelocity(e.getItemDrop().getVelocity().multiply(throwable.speedMultiplier));
                         // TODO Make throws slightly less random by using player head directiona and then randomizing
                         e.getPlayer().setExhaustion(e.getPlayer().getExhaustion()+throwable.exhaustion);
                         e.getItemDrop().setPickupDelay(100);
@@ -54,7 +59,8 @@ public class ThrowingStones extends JavaPlugin {
                         // TODO Use .setMetaData() to track? or an invisible arrow?
                         // TODO Set PickupDelay back to 0 when item stops moving
                         // TODO Stop item from moving when hitting a player or entity or use .isOnGround()
-                        e.getPlayer().sendMessage("You threw some "+e.getItemDrop().getName()+" at "+e.getItemDrop().getVelocity()+"!");
+                        //e.getPlayer().sendMessage("You threw some "+e.getItemDrop().getName()+" at "+e.getItemDrop().getVelocity()+"!");
+                        e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.SHOOT_ARROW, 1.0f, 2.0f);
                     }
                 }
             }

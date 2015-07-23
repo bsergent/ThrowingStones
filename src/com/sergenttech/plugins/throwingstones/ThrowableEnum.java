@@ -13,12 +13,23 @@ import org.bukkit.potion.PotionEffect;
  */
 public enum ThrowableEnum {
     
-    COBBLESTONE(3f, 1, new PotionEffect[]{}, 0.8f);
+    COBBLESTONE(1.0f, 1, new PotionEffect[]{}, 0.8f);
+    
+    /*
+    SPEEDMULTIPLIER
+    1.2f -> ~30blks
+    1.1f -> ~25blks
+    1.0f -> ~20blks
+    
+    EXHAUSTION
+    4.0f -> 1 hunger point
+    0.8f -> sprint jumping
+    */
     
     public final float speedMultiplier;
     public final int damage;
     public final PotionEffect[] effects;
-    public final float exhaustion; // 4.0 is a hunger point
+    public final float exhaustion;
  
     private ThrowableEnum(float speedMultiplier, int damage, PotionEffect[] effects, float exhaustion) {
             this.speedMultiplier = speedMultiplier;

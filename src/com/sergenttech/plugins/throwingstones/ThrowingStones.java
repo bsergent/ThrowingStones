@@ -5,6 +5,7 @@
 package com.sergenttech.plugins.throwingstones;
 
 import java.io.IOException;
+import java.util.Random;
 import java.util.logging.Level;
 import org.bukkit.Sound;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,7 +17,7 @@ import org.bukkit.util.Vector;
  */
 public class ThrowingStones extends JavaPlugin {
     
-    private final String version = "0.0.3";
+    private final String version = "0.0.4";
     
     @Override
     public void onEnable() {
@@ -49,7 +50,12 @@ public class ThrowingStones extends JavaPlugin {
                         ThrowableEnum throwable = ThrowableEnum.valueOf(e.getItemDrop().getItemStack().getType().name());
                         Vector vel = e.getPlayer().getLocation().getDirection();
                         vel = vel.multiply(throwable.speedMultiplier);
-                        vel = vel.add(Vector.getRandom().multiply(0.2f));
+                        float randomMultiplier = 0.2f;
+                        if (new Random().nextBoolean()) {
+                            vel = vel.add(Vector.getRandom().multiply(randomMultiplier));
+                        } else {
+                            vel = vel.subtract(Vector.getRandom().multiply(randomMultiplier));
+                        }
                         e.getItemDrop().setVelocity(vel);
                         //e.getItemDrop().setVelocity(e.getItemDrop().getVelocity().multiply(throwable.speedMultiplier));
                         // TODO Make throws slightly less random by using player head directiona and then randomizing
@@ -59,6 +65,7 @@ public class ThrowingStones extends JavaPlugin {
                         // TODO Use .setMetaData() to track? or an invisible arrow?
                         // TODO Set PickupDelay back to 0 when item stops moving
                         // TODO Stop item from moving when hitting a player or entity or use .isOnGround()
+                        // TODO Check if pvp is enabled through plugins or settings before causing damage or effects
                         //e.getPlayer().sendMessage("You threw some "+e.getItemDrop().getName()+" at "+e.getItemDrop().getVelocity()+"!");
                         e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.SHOOT_ARROW, 1.0f, 2.0f);
                     }

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Random;
 import java.util.logging.Level;
 import org.bukkit.Sound;
+import org.bukkit.entity.EntityType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 /**
@@ -61,6 +62,10 @@ public class ThrowingStones extends JavaPlugin {
                         // TODO Make throws slightly less random by using player head directiona and then randomizing
                         e.getPlayer().setExhaustion(e.getPlayer().getExhaustion()+throwable.exhaustion);
                         e.getItemDrop().setPickupDelay(100);
+                        
+                        e.getItemDrop().setMetadata("thrownEffects", null);
+                        e.getItemDrop().getLocation().getWorld().spawnEntity(e.getPlayer().getLocation(), EntityType.SNOWBALL);
+                        
                         // e.getItemDrop().setMetadata("throwable", null);
                         // TODO Use .setMetaData() to track? or an invisible arrow?
                         // TODO Set PickupDelay back to 0 when item stops moving

@@ -13,7 +13,7 @@ import org.bukkit.potion.PotionEffect;
  */
 public enum ThrowableEnum {
     
-    COBBLESTONE(1.0f, 1, new PotionEffect[]{}, 0.8f);
+    COBBLESTONE(1.0f, 1, new PotionEffect[]{}, 0.8f, true);
     
     /*
     SPEEDMULTIPLIER
@@ -30,12 +30,14 @@ public enum ThrowableEnum {
     public final int damage;
     public final PotionEffect[] effects;
     public final float exhaustion;
+    public final boolean consumable;
  
-    private ThrowableEnum(float speedMultiplier, int damage, PotionEffect[] effects, float exhaustion) {
+    private ThrowableEnum(float speedMultiplier, int damage, PotionEffect[] effects, float exhaustion, boolean consumable) {
             this.speedMultiplier = speedMultiplier;
             this.damage = damage;
             this.effects = effects;
             this.exhaustion = exhaustion;
+            this.consumable = consumable;
     }
     
 }

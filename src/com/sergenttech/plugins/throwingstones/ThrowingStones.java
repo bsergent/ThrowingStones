@@ -61,10 +61,9 @@ public class ThrowingStones extends JavaPlugin {
                         //e.getItemDrop().setVelocity(e.getItemDrop().getVelocity().multiply(throwable.speedMultiplier));
                         // TODO Make throws slightly less random by using player head directiona and then randomizing
                         e.getPlayer().setExhaustion(e.getPlayer().getExhaustion()+throwable.exhaustion);
-                        e.getItemDrop().setPickupDelay(100);
+                        e.getItemDrop().setPickupDelay((int) (ThrownRunnable.MAX_DURATION/1000*20));
                         
-                        e.getItemDrop().setMetadata("thrownEffects", null);
-                        e.getItemDrop().getLocation().getWorld().spawnEntity(e.getPlayer().getLocation(), EntityType.SNOWBALL);
+                        new ThrownRunnable(e.getItemDrop(), throwable, e.getPlayer()).runTaskTimer(ThrowingStones.this, 0, 1);
                         
                         // e.getItemDrop().setMetadata("throwable", null);
                         // TODO Use .setMetaData() to track? or an invisible arrow?

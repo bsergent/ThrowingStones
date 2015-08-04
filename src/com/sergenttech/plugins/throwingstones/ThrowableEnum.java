@@ -13,7 +13,7 @@ import org.bukkit.potion.PotionEffect;
  */
 public enum ThrowableEnum {
     
-    COBBLESTONE(1.0f, 1, new PotionEffect[]{}, 0.8f, true);
+    COBBLESTONE(1.2f, 1, new PotionEffect[]{}, 1.4f, true);
     
     /*
     SPEEDMULTIPLIER

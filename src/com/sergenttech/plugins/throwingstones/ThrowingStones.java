@@ -5,10 +5,11 @@
 package com.sergenttech.plugins.throwingstones;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.logging.Level;
 import org.bukkit.Sound;
-import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 /**
@@ -18,7 +19,8 @@ import org.bukkit.util.Vector;
  */
 public class ThrowingStones extends JavaPlugin {
     
-    private final String version = "0.0.4";
+    private final String version = "0.1.0";
+    private final HashMap<Player,Long> cooldowns = new HashMap();
     
     @Override
     public void onEnable() {
@@ -47,31 +49,26 @@ public class ThrowingStones extends JavaPlugin {
         public void onPlayerThrow(org.bukkit.event.player.PlayerDropItemEvent e) {
             if (e.getPlayer().isSneaking()) {
                 for (ThrowableEnum thr : ThrowableEnum.values()) {
-                    if (e.getItemDrop().getItemStack().getType().name().equalsIgnoreCase(thr.name())) {
-                        ThrowableEnum throwable = ThrowableEnum.valueOf(e.getItemDrop().getItemStack().getType().name());
-                        Vector vel = e.getPlayer().getLocation().getDirection();
-                        vel = vel.multiply(throwable.speedMultiplier);
-                        float randomMultiplier = 0.2f;
-                        if (new Random().nextBoolean()) {
-                            vel = vel.add(Vector.getRandom().multiply(randomMultiplier));
+                    if (e.getItemDrop().getItemStack().getType().name().equalsIgnoreCase(thr.name()) && e.getPlayer().getFoodLevel() >= getConfig().getInt("min_hunger", 0)) {
+                        if (!cooldowns.containsKey(e.getPlayer()) || cooldowns.get(e.getPlayer())+getConfig().getLong("throw_cooldown_inMilli", 250)<System.currentTimeMillis()) {
+                            ThrowableEnum throwable = ThrowableEnum.valueOf(e.getItemDrop().getItemStack().getType().name());
+                            Vector vel = e.getPlayer().getLocation().getDirection();
+                            vel = vel.multiply(throwable.speedMultiplier);
+                            float randomMultiplier = 0.1f;
+                            if (new Random().nextBoolean()) {
+                                vel = vel.add(Vector.getRandom().multiply(randomMultiplier));
+                            } else {
+                                vel = vel.subtract(Vector.getRandom().multiply(randomMultiplier));
+                            }
+                            e.getItemDrop().setVelocity(vel);
+                            e.getPlayer().setExhaustion(e.getPlayer().getExhaustion()+throwable.exhaustion);
+                            e.getItemDrop().setPickupDelay((int) (ThrownRunnable.MAX_DURATION/1000*20));
+                            new ThrownRunnable(e.getItemDrop(), throwable, e.getPlayer()).runTaskTimer(ThrowingStones.this, 0, 1);
+                            cooldowns.put(e.getPlayer(), System.currentTimeMillis());
+                            e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.SHOOT_ARROW, 1.0f, 0.8f);
                         } else {
-                            vel = vel.subtract(Vector.getRandom().multiply(randomMultiplier));
+                            e.setCancelled(true);
                         }
-                        e.getItemDrop().setVelocity(vel);
-                        //e.getItemDrop().setVelocity(e.getItemDrop().getVelocity().multiply(throwable.speedMultiplier));
-                        // TODO Make throws slightly less random by using player head directiona and then randomizing
-                        e.getPlayer().setExhaustion(e.getPlayer().getExhaustion()+throwable.exhaustion);
-                        e.getItemDrop().setPickupDelay((int) (ThrownRunnable.MAX_DURATION/1000*20));
-                        
-                        new ThrownRunnable(e.getItemDrop(), throwable, e.getPlayer()).runTaskTimer(ThrowingStones.this, 0, 1);
-                        
-                        // e.getItemDrop().setMetadata("throwable", null);
-                        // TODO Use .setMetaData() to track? or an invisible arrow?
-                        // TODO Set PickupDelay back to 0 when item stops moving
-                        // TODO Stop item from moving when hitting a player or entity or use .isOnGround()
-                        // TODO Check if pvp is enabled through plugins or settings before causing damage or effects
-                        //e.getPlayer().sendMessage("You threw some "+e.getItemDrop().getName()+" at "+e.getItemDrop().getVelocity()+"!");
-                        e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.SHOOT_ARROW, 1.0f, 2.0f);
                     }
                 }
             }

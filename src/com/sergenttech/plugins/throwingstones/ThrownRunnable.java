@@ -5,8 +5,13 @@
  */
 package com.sergenttech.plugins.throwingstones;
 
+import java.util.List;
+import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.util.Vector;
 
 /**
  *
@@ -34,9 +39,27 @@ public class ThrownRunnable extends org.bukkit.scheduler.BukkitRunnable {
             this.cancel();
             return;
         }
-        if (item.isOnGround()) {
-            source.sendMessage("The item hit the ground.");
+        if (item.isOnGround() && item.getVelocity().equals(new Vector())) {
+            item.setPickupDelay(0);
+            item.setVelocity(new Vector(0,0,0));
             this.cancel();
+            return;
+        }
+        List<Entity> entities = item.getNearbyEntities(0.2, 0.2, 0.2);
+        for (Entity e : entities) {
+            if (e != source && e instanceof org.bukkit.entity.Damageable) {
+                org.bukkit.entity.Damageable ed = (org.bukkit.entity.Damageable) e;
+                ed.damage(type.damage, source);
+                if (e instanceof org.bukkit.entity.LivingEntity) {
+                    org.bukkit.entity.LivingEntity el = (org.bukkit.entity.LivingEntity) e;
+                    for (PotionEffect effect : type.effects) {
+                        el.addPotionEffect(effect);
+                    }
+                }
+                item.remove();
+                source.playSound(source.getLocation(), Sound.ARROW_HIT, 1.0f, 0.8f);
+                this.cancel();
+            }
         }
     }
     

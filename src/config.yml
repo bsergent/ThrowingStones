@@ -1,4 +1,3 @@
-cobble_enabled: true
-brick_enable: true
-slime_enable: true
+throw_cooldown_inMilli: 500
+min_hunger: 7
 verbose_errors: false
